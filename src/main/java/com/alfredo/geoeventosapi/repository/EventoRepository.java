@@ -28,7 +28,9 @@ public class EventoRepository {
             rs.getString("lugar_evento"),
             rs.getString("vigencia_evento"),
             rs.getString( "descripcion_evento"),
-            rs.getString("fotos_evento")
+            rs.getString("fotos_evento"),
+            rs.getObject("latitud")  != null ? rs.getDouble("latitud")  : null,
+            rs.getObject("longitud") != null ? rs.getDouble("longitud") : null
     );
 
     // ── SELECT todos ────────────────────────────────────────────────────────
@@ -61,8 +63,9 @@ public class EventoRepository {
         String sql = """
         INSERT INTO eventos
             (nombre_evento, valor_evento, lugar_evento,
-             vigencia_evento, descripcion_evento, fotos_evento)
-        VALUES (?, ?, ?, ?, ?, ?)
+             vigencia_evento, descripcion_evento, fotos_evento, 
+             latitud, longitud)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """;
         return jdbc.update(sql,
                 e.getNombreEvento(),
@@ -70,7 +73,9 @@ public class EventoRepository {
                 e.getLugarEvento(),
                 e.getVigenciaEvento(),
                 e.getDescripcionEvento(),
-                e.getFotosEvento()
+                e.getFotosEvento(),
+                e.getLatitud(),
+                e.getLongitud()
         );
     }
 
@@ -84,7 +89,9 @@ public class EventoRepository {
             lugar_evento       = ?,
             vigencia_evento    = ?,
             descripcion_evento = ?,
-            fotos_evento       = ?
+            fotos_evento       = ?,
+            latitud            = ?,
+            longitud           = ?
         WHERE event_id = ?
         """;
         return jdbc.update(sql,
@@ -94,6 +101,8 @@ public class EventoRepository {
                 e.getVigenciaEvento(),
                 e.getDescripcionEvento(),
                 e.getFotosEvento(),
+                e.getLatitud(),
+                e.getLongitud(),
                 id
         );
     }

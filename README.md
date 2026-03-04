@@ -2,7 +2,7 @@
 
 API REST para la plataforma **GeoEventos**, desarrollada con Spring Boot. Gestiona los eventos geolocalizados, el acceso a la base de datos PostgreSQL y la integración con ImgBB para el almacenamiento de imágenes.
 
-> Este repositorio contiene únicamente el backend. El cliente de escritorio se encuentra en [GeoEventosGUI](https://github.com/AlfredoSWDev/GeoEventosGUI).
+> Este repositorio contiene únicamente el backend. Los clientes se encuentran en [GeoEventosGUI](https://github.com/AlfredoSWDev/GeoEventosGUI) y [GeoEventosAndroid](https://github.com/AlfredoSWDev/GeoEventosAndroid).
 
 ---
 
@@ -32,10 +32,13 @@ El proyecto inicia con un **MVP CRUD** que centraliza toda la lógica de negocio
 ## Arquitectura
 
 ```
-Cliente (Swing / cualquier HTTP client)
-      │
-      │  HTTP REST (JSON)
-      ▼
+Clientes
+  ├── GeoEventosGUI   (Swing / escritorio)
+  ├── GeoEventosAndroid (Android / Kotlin)
+  └── cualquier HTTP client
+          │
+          │  HTTP REST (JSON)
+          ▼
 ┌──────────────────────────────┐
 │        Controller Layer      │  ← Recibe y responde peticiones HTTP
 ├──────────────────────────────┤
@@ -43,9 +46,9 @@ Cliente (Swing / cualquier HTTP client)
 ├──────────────────────────────┤
 │       Repository Layer       │  ← Acceso a datos con JdbcTemplate
 └──────────────────────────────┘
-      │                  │
-      ▼                  ▼
- PostgreSQL            ImgBB API
+          │                │
+          ▼                ▼
+     PostgreSQL         ImgBB API
 ```
 
 ### Estructura del Proyecto
@@ -108,7 +111,9 @@ curl -X POST http://localhost:8080/api/eventos \
     "lugarEvento":       "Plaza Central",
     "vigenciaEvento":    "Vigente",
     "descripcionEvento": "Concierto al aire libre",
-    "fotosEvento":       null
+    "fotosEvento":       null,
+    "latitud":           -33.4489,
+    "longitud":          -70.6693
   }'
 ```
 
@@ -141,7 +146,9 @@ CREATE TABLE public.eventos (
     descripcion_evento TEXT,
     vigencia_evento    TEXT,
     valor_evento       TEXT,
-    lugar_evento       TEXT NOT NULL
+    lugar_evento       TEXT NOT NULL,
+    latitud            DOUBLE PRECISION,
+    longitud           DOUBLE PRECISION
 );
 ```
 
@@ -209,7 +216,7 @@ logging.level.org.springframework.jdbc=DEBUG
 
 ## Roadmap
 
-- [ ] Integración con coordenadas geográficas (latitud / longitud)
+- [x] Integración con coordenadas geográficas (latitud / longitud)
 - [ ] Endpoint de eventos por proximidad geográfica
 - [ ] Autenticación y autorización (JWT)
 - [ ] Paginación en listado de eventos
@@ -223,4 +230,5 @@ logging.level.org.springframework.jdbc=DEBUG
 | Repositorio | Descripción |
 |-------------|-------------|
 | [GeoEventosGUI](https://github.com/AlfredoSWDev/GeoEventosGUI) | Cliente de escritorio Swing |
+| [GeoEventosAndroid](https://github.com/AlfredoSWDev/GeoEventosAndroid) | Cliente móvil Android |
 | **GeoEventosAPI** | Este repositorio — API REST Spring Boot |

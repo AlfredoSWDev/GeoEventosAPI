@@ -10,12 +10,15 @@ public class Evento {
     private String  vigenciaEvento;
     private String  descripcionEvento;
     private String  fotosEvento;
+    private Double  latitud;
+    private Double  longitud;
 
     public Evento() {}
 
     public Evento(Integer eventId, String nombreEvento, String valorEvento,
                   String lugarEvento, String vigenciaEvento,
-                  String descripcionEvento, String fotosEvento) {
+                  String descripcionEvento, String fotosEvento,
+                  Double latitud, Double longitud) {
         this.eventId           = eventId;
         this.nombreEvento      = nombreEvento;
         this.valorEvento       = valorEvento;
@@ -23,6 +26,8 @@ public class Evento {
         this.vigenciaEvento    = vigenciaEvento;
         this.descripcionEvento = descripcionEvento;
         this.fotosEvento       = fotosEvento;
+        this.latitud           = latitud;
+        this.longitud          = longitud;
     }
 
     public Integer getEventId()                       { return eventId; }
@@ -45,4 +50,10 @@ public class Evento {
 
     public String getFotosEvento()                    { return fotosEvento; }
     public void setFotosEvento(String fotosEvento)    { this.fotosEvento = fotosEvento; }
+
+    public Double getLatitud()                    { return latitud; }
+    public void setLatitud(Double latitud)    { this.latitud = latitud; }
+
+    public Double getLongitud()                    { return longitud; }
+    public void setLongitud(Double longitud)    { this.longitud = longitud; }
 }

@@ -67,6 +67,8 @@ public class EventoService {
         e.setVigenciaEvento(dto.getVigenciaEvento());        // antes: setVigencia
         e.setDescripcionEvento(dto.getDescripcionEvento());  // antes: setDescripcion
         e.setFotosEvento(dto.getFotosEvento());              // antes: setFotos
+        e.setLatitud(dto.getLatitud());
+        e.setLongitud(dto.getLongitud());
         return e;
     }
 }
