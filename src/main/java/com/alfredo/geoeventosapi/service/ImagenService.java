@@ -14,17 +14,20 @@ import java.util.Map;
 @Service
 public class ImagenService {
 
-    // Lee los valores de application.properties
     @Value("${imgbb.api.key}")
     private String apiKey;
 
     @Value("${imgbb.api.url}")
     private String apiUrl;
 
-    private final WebClient webClient = WebClient.create();
+    // ── WebClient inyectado por constructor → testeable con Mockito ─────────
+    private final WebClient webClient;
+
+    public ImagenService(WebClient webClient) {
+        this.webClient = webClient;
+    }
 
     public String subirImagen(MultipartFile archivo) throws Exception {
-
         // 1. Convertir el archivo a Base64
         String base64 = Base64.getEncoder()
                 .encodeToString(archivo.getBytes());
@@ -40,7 +43,7 @@ public class ImagenService {
                 .body(BodyInserters.fromFormData(body))
                 .retrieve()
                 .bodyToMono(Map.class)
-                .block(); // bloqueamos porque estamos en contexto Servlet (no reactivo)
+                .block();
 
         // 4. Extraer la URL de la respuesta JSON
         if (response != null && Boolean.TRUE.equals(response.get("success"))) {

@@ -18,14 +18,16 @@ El proyecto inicia con un **MVP CRUD** que centraliza toda la lógica de negocio
 
 | Tecnología | Uso |
 |------------|-----|
-| Java 21 | Lenguaje principal |
-| Spring Boot 3.3 | Framework principal |
+| Java 25 | Lenguaje principal |
+| Spring Boot 4.0.3 | Framework principal |
 | Spring Web | Controladores REST |
 | Spring JDBC | Acceso a base de datos |
 | Spring WebFlux | WebClient para llamadas a ImgBB |
 | PostgreSQL | Base de datos |
 | Jackson | Serialización / deserialización JSON |
 | Gradle | Build system |
+| JUnit 6 | Framework de testing |
+| Mockito | Mocking para unit tests |
 
 ---
 
@@ -54,22 +56,80 @@ Clientes
 ### Estructura del Proyecto
 
 ```
-src/main/java/com/alfredo/api/
-├── GeoEventosApiApplication.java    # Punto de entrada
-├── controller/
-│   ├── EventoController.java        # Endpoints CRUD de eventos
-│   └── ImagenController.java        # Endpoint de subida de imágenes
-├── service/
-│   ├── EventoService.java           # Lógica de negocio
-│   └── ImagenService.java           # Integración con ImgBB
-├── repository/
-│   └── EventoRepository.java        # Consultas SQL con JdbcTemplate
-├── model/
-│   └── Evento.java                  # Entidad de dominio
-└── dto/
-    ├── EventoDTO.java               # Datos de entrada (crear/actualizar)
-    └── ImagenResponseDTO.java       # Respuesta tras subir imagen
+src/
+├── main/java/com/alfredo/geoeventosapi/
+│   ├── GeoEventosApplication.java
+│   ├── config/
+│   │   └── WebClientConfig.java         # Bean de WebClient
+│   ├── controller/
+│   │   ├── EventoController.java
+│   │   └── ImagenController.java
+│   ├── service/
+│   │   ├── EventoService.java
+│   │   └── ImagenService.java
+│   ├── repository/
+│   │   └── EventoRepository.java
+│   ├── model/
+│   │   └── Evento.java
+│   └── dto/
+│       ├── EventoDTO.java
+│       └── ImagenResponseDTO.java
+└── test/java/com/alfredo/geoeventosapi/
+    ├── controller/
+    │   ├── EventoControllerTest.java    # 13 tests — MockMvc standaloneSetup
+    │   └── ImagenControllerTest.java   #  4 tests — MockMvc + MockMultipartFile
+    ├── service/
+    │   ├── EventoServiceTest.java      # 12 tests — Mockito
+    │   └── ImagenServiceTest.java      #  5 tests — WebClient chain mock
+    └── repository/
+        └── EventoRepositoryTest.java   # 12 tests — JdbcTemplate mock
 ```
+
+---
+
+## Testing
+
+El proyecto cuenta con **46 unit tests** que cubren las tres capas de la arquitectura sin necesidad de base de datos ni servicios externos.
+
+### Resumen de cobertura
+
+| Clase | Tests | Descripción |
+|-------|-------|-------------|
+| `EventoServiceTest` | 12 | Lógica de negocio: listar, buscar, obtener, crear, actualizar, eliminar |
+| `EventoControllerTest` | 13 | Endpoints REST: status codes, body, parámetros |
+| `ImagenControllerTest` | 4 | Subida de imagen: éxito, error, sin archivo, archivo vacío |
+| `ImagenServiceTest` | 5 | Integración con ImgBB: respuesta válida, fallos, error de red |
+| `EventoRepositoryTest` | 12 | Queries SQL: findAll, search, findById, save, update, delete |
+
+### Ejecutar los tests
+
+```bash
+./gradlew test
+```
+
+Ver reporte HTML con resultados detallados:
+
+```bash
+./gradlew test
+open build/reports/tests/test/index.html
+```
+
+### Tecnologías de testing
+
+- **JUnit 6** — framework de tests con `@Test`, `@BeforeEach`, `@DisplayName`
+- **Mockito** — mocking de dependencias con `@Mock`, `@InjectMocks`, `@MockitoBean`
+- **MockMvc** (`standaloneSetup`) — testing de controllers HTTP sin contexto Spring
+- **AssertJ** — aserciones fluidas con `assertThat`
+- **MockMultipartFile** — simulación de archivos multipart para tests de subida de imágenes
+
+### Notas sobre compatibilidad con Spring Boot 4
+
+Spring Boot 4 introdujo cambios importantes respecto a versiones anteriores que afectan el testing:
+
+- `@WebMvcTest` fue **eliminado** — se reemplaza con `MockMvcBuilders.standaloneSetup()`
+- `@MockBean` fue **reemplazado** por `@MockitoBean` (`org.springframework.test.context.bean.override.mockito`)
+- Jackson migró de `com.fasterxml.jackson` (v2) a `tools.jackson` (v3)
+- `WebClient` debe inyectarse por constructor para poder ser mockeado en tests
 
 ---
 
@@ -156,7 +216,7 @@ CREATE TABLE public.eventos (
 
 ## Requisitos
 
-- Java 21+
+- Java 25+
 - PostgreSQL corriendo localmente (o en la nube)
 - API Key de [ImgBB](https://imgbb.com)
 
@@ -217,6 +277,7 @@ logging.level.org.springframework.jdbc=DEBUG
 ## Roadmap
 
 - [x] Integración con coordenadas geográficas (latitud / longitud)
+- [x] Unit tests con JUnit 6 + Mockito (46 tests, 3 capas)
 - [ ] Endpoint de eventos por proximidad geográfica
 - [ ] Autenticación y autorización (JWT)
 - [ ] Paginación en listado de eventos
