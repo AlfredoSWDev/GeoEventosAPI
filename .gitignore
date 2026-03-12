@@ -35,3 +35,5 @@ out/
 
 ### VS Code ###
 .vscode/
+contextgenerator.sh
+API_context.txt
