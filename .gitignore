@@ -38,3 +38,5 @@ out/
 .vscode/
 contextgenerator.sh
 API_context.txt
+fly.toml
+
